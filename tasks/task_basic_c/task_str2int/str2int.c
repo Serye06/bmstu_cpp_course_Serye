@@ -1,29 +1,46 @@
-#include <stdio.h>
 #include <assert.h>
+#include <limits.h>
 #include "str2int.h"
-#define MAX_LENGTH 100
 
-int str2int(const char* str) {
-    int num = 0;
-    int i = 0; 
-    while (str[i] >= '0' && str[i] <= '9') { 
-        num = num * 10 + (str[i++] - '0'); 
+
+int str2int(const char *str) {
+  int result = 0;
+  int s = 1;
+
+  if (*str == '\0') {
+    assert(0);
+  }
+
+  if (*str == '-') {
+    s = -1;
+    str++;
+  } else if (*str == '+') {
+    str++;
+  }
+
+  if (*str == '\0') {
+    assert(0);
+  }
+
+  while (*str != '\0') {
+    if (*str < '0' || *str > '9') {
+      assert(0);
     }
 
+    int digit = *str - '0';
+
+    if (s == 1 && (result > INT_MAX / 10 || (result == INT_MAX / 10 && digit > INT_MAX % 10))) {
+      assert(0);
+    }
+
+    if (s == -1 && (-result < INT_MIN / 10 || (-result == INT_MIN / 10 && digit > -(INT_MIN % 10)))) {
+      assert(0);
+    }
+
+    result = result * 10 + digit;
+    str++;
+  }
+
+  return s * result;
 }
 
-// int main() {
-//     // char str[MAX_LENGTH]; 
-//     // int num = 0;
-//     // int i = 0; 
-
-//     //printf("Введите строку: ");
-//     //scanf("%s", str); 
-//     // char* str = "123";
-//     // while (str[i] >= '0' && str[i] <= '9') { 
-//     //     num = num * 10 + (str[i++] - '0'); 
-//     // }
-//     printf("%d\n", str2int("123"));
-
-//     return 0;
-// }
